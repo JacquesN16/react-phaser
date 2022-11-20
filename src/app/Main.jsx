@@ -1,16 +1,16 @@
 import {useEffect} from "react";
 import Phaser from 'phaser';
 import blue_cat_sprite from './assets/blue_001.png'
+import ball from './assets/ball.png'
 
 export default function Main (){
 
     let game = null
     let cursors = null
-    let cat_player = null
     let blue_cat = null
     let blue_cat_sprite_name = 'blue_cat'
-    let ball_sprite_name = 'ball_sprite'
-    let ball_sprite = null
+    let ball_item = null
+
 
     let config = {
         parent:"containerId",
@@ -40,22 +40,34 @@ export default function Main (){
             repeat: -1
         });
     }
+    const ball_move = (ball) => {
+
+    }
+
+    // const collectBall = (ball) =>
+    // {
+    //     ball.disableBody(true, true);
+    // }
+
+    function collectBall (player, ball)
+    {
+        ball.disableBody(true, true);
+    }
 
     function preload () {
 
         this.load.spritesheet('blue_cat', blue_cat_sprite,{frameWidth: 32, frameHeight: 32})
-        // this.load.image(ball_sprite_name,ball,{frameWidth:500, frameHeight:500} )
+        this.load.image('ball', './assets/ball.png')
     }
 
     function create () {
 
-
+        this.physics.world.setBounds(0, 0, 500 * 4, 500 * 4);
         cursors = this.input.keyboard.createCursorKeys()
 
-        // ball_sprite = this.physics.add.image(50,50,ball_sprite_name)
-        // ball_sprite.setCollideWorldBounds(true)
         blue_cat = this.physics.add.sprite(20,20,blue_cat_sprite)
         blue_cat.setCollideWorldBounds(true);
+        ball_item = this.physics.add.group({key:'ball', repeat: 1, setXY: { x:50, y: 50} })
 
 
         create_animate(this.anims, blue_cat_sprite_name, 'right', 36,39)
@@ -64,6 +76,9 @@ export default function Main (){
         create_animate(this.anims, blue_cat_sprite_name, 'up', 44,47)
         create_animate(this.anims, blue_cat_sprite_name, 'down', 28,31)
 
+
+
+        this.physics.add.overlap(blue_cat, ball_item, collectBall, null, this);
     }
 
     function update (){
@@ -85,6 +100,9 @@ export default function Main (){
             blue_cat.setVelocity(0);
             blue_cat.anims.play('stay',true);
         }
+
+        ball_item.setVelocityX(50)
+        ball_item.setVelocityY(50)
 
     }
 
